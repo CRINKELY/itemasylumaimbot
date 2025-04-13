@@ -1,3 +1,5 @@
+print("v1")
+
 for _, func in next, getgc(true) do
 	if typeof(func) == "function" then
 		local funcName = debug.info(func, "n")
