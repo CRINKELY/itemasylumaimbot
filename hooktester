@@ -1,0 +1,67 @@
+local hookRunning = false
+
+function hookremote(remote, callback)
+	local originalFireServer = remote.FireServer
+	
+	remote.FireServer = function(self, ...)
+		callback(self, ...)
+		return originalFireServer(self, ...)
+	end
+end
+
+function packprintableArgs(...)
+	local function packprintable(val, indent, seen)
+		indent = indent or 0
+		seen = seen or {}
+		local spacing = string.rep("  ", indent)
+		local output = ""
+
+		if type(val) == "table" then
+			if seen[val] then
+				return spacing .. "*RECURSION*"
+			end
+			seen[val] = true
+			output = output .. spacing .. "{\n"
+			for k, v in pairs(val) do
+				local keyStr = ""
+				if type(k) == "string" then
+					keyStr = '["' .. k .. '"]'
+				else
+					keyStr = "[" .. tostring(k) .. "]"
+				end
+				output = output .. spacing .. "  " .. keyStr .. " = " .. packprintable(v, indent + 1, seen) .. ",\n"
+			end
+			output = output .. spacing .. "}"
+		else
+			output = spacing .. tostring(val)
+		end
+
+		return output
+	end
+	
+	local t = "{\n"
+	for i, item in ipairs({ ... }) do
+		t = t .. "  [" .. tostring(i) .. "] = " .. packprintable(item, 1) .. ",\n"
+	end
+	t = t .. "}"
+	
+	return t
+end
+
+local HookedRemotes = {}
+
+game.Players.LocalPlayer.Backpack.ChildAdded:Connect(function(child)
+	if child:IsA("Tool") then
+		if child:FindFirstChildWhichIsA("RemoteEvent") and not table.find(HookedRemotes, child:FindFirstChildWhichIsA("RemoteEvent")) then
+			local RemoteEvent = child:FindFirstChildWhichIsA("RemoteEvent")
+			
+			table.insert(HookedRemotes, RemoteEvent)
+			print("Hooked remote location: "..RemoteEvent:GetFullName())
+			
+			hookremote(RemoteEvent, function(remote, ...)
+				print("Remote fired:", remote:GetFullName())
+				print("Arguments:", ...)
+			end)
+		end
+	end
+end)
