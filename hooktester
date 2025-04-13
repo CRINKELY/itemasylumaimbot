@@ -1,12 +1,14 @@
+print("Running hooking...")
+
 local hookRunning = false
 
 function hookremote(remote, callback)
 	local originalFireServer = remote.FireServer
-	
-	remote.FireServer = function(self, ...)
+	local hookedFireServer = hookfunction(originalFireServer, function(self, ...)
 		callback(self, ...)
 		return originalFireServer(self, ...)
-	end
+	end)
+	remote.FireServer = hookedFireServer
 end
 
 function packprintableArgs(...)
