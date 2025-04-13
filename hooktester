@@ -1,14 +1,19 @@
-print("Running hooking...")
+print("Running hooking v2...")
 
 local hookRunning = false
 
 function hookremote(remote, callback)
-	local originalFireServer = remote.FireServer
-	local hookedFireServer = hookfunction(originalFireServer, function(self, ...)
-		callback(self, ...)
-		return originalFireServer(self, ...)
+	local mt = getrawmetatable(remote)
+	local originalNamecall = mt.__namecall
+	setreadonly(mt, false)
+	mt.__namecall = newcclosure(function(self, ...)
+		local method = getnamecallmethod()
+		if self == remote and method == "FireServer" then
+			callback(self, ...)
+		end
+		return originalNamecall(self, ...)
 	end)
-	remote.FireServer = hookedFireServer
+	setreadonly(mt, true)
 end
 
 function packprintableArgs(...)
