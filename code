@@ -1,4 +1,4 @@
-print("Aimbot V1 initalized.")
+print("v2")
 
 --Converted with ttyyuu12345's model to script plugin v4
 function sandbox(var,func)
@@ -96,8 +96,22 @@ table.insert(cors,sandbox(LocalScript4,function()
 
 		TweenService:Create(script.Parent, tweenInfo, {["BackgroundColor3"] = Color3.fromRGB(85, 0, 0)}):Play()
 	end)
+	
+	local Highlight = Instance.new("Highlight")
+	Highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+	Highlight.Parent = game.ReplicatedStorage
 
 	while task.wait() do
+		local target = GetBestTarget()
+		
+		if target.Character ~= nil then
+			pcall(function()
+				Highlight.Adornee = target.Character.Head
+			end)
+		else
+			Highlight.Adornee = nil
+		end
+		
 		if IS_HOLDING then
 			if game.Players.LocalPlayer.Character:FindFirstChildWhichIsA("Tool") ~= nil then
 				local tool = game.Players.LocalPlayer.Character:FindFirstChildWhichIsA("Tool")
