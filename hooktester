@@ -1,7 +1,7 @@
+print("Hook v2")
+
 local Players = game:GetService("Players")
 local LogList = {} -- Table to store logs
-
-print("Hook script initialized.")
 
 -- Function to log remote calls
 local function logRemoteCall(remote, args)
@@ -29,14 +29,15 @@ end
 
 -- Hook metatable for Namecall
 local originalNamecall
-originalNamecall = hookmetamethod(game, "__namecall", function(self, ...)
+originalNamecall = hookmetamethod(game, "__namecall", newcclosure(function(self, ...)
     local methodName = getnamecallmethod()
     
     if (methodName == "FireServer" or methodName == "InvokeServer") then
         hookRemote(self, methodName, ...)
     end
     
+    -- Call the original namecall method
     return originalNamecall(self, ...)
-end)
+end))
 
 print("Logging system initialized")
