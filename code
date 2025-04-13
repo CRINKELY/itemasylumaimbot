@@ -1,15 +1,149 @@
-print("v2")
 
-local functions = {}
-	
-	for _, func in next, getgc(true) do
-		if typeof(func) == "function" then
-			local funcName = debug.info(func, "n")
-			
-			if funcName ~= "" and funcName ~= " " and funcName ~= nil and string.find(funcName, "Fire") ~= nil or string.find(funcName, "Invoke") ~= nil then
-				table.insert(functions, funcName)
+--Converted with ttyyuu12345's model to script plugin v4
+function sandbox(var,func)
+	local env = getfenv(func)
+	local newenv = setmetatable({},{
+		__index = function(self,k)
+			if k=="script" then
+				return var
+			else
+				return env[k]
+			end
+		end,
+	})
+	setfenv(func,newenv)
+	return func
+end
+cors = {}
+mas = Instance.new("Model",game:GetService("Lighting"))
+ScreenGui0 = Instance.new("ScreenGui")
+ImageButton1 = Instance.new("ImageButton")
+UIAspectRatioConstraint2 = Instance.new("UIAspectRatioConstraint")
+TextLabel3 = Instance.new("TextLabel")
+LocalScript4 = Instance.new("LocalScript")
+ScreenGui0.Name = "Main"
+ScreenGui0.Parent = mas
+ScreenGui0.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+ImageButton1.Name = "Button"
+ImageButton1.Parent = ScreenGui0
+ImageButton1.Position = UDim2.new(0.800000012, 0, 0.300000012, 0)
+ImageButton1.Size = UDim2.new(0.100000001, 0, 0.100000001, 0)
+ImageButton1.BackgroundColor = BrickColor.new("Maroon")
+ImageButton1.BackgroundColor3 = Color3.new(0.333333, 0, 0)
+ImageButton1.BorderColor = BrickColor.new("Really black")
+ImageButton1.BorderColor3 = Color3.new(0, 0, 0)
+ImageButton1.BorderSizePixel = 0
+ImageButton1.Image = "rbxassetid://124272596427243"
+ImageButton1.ImageTransparency = 0.6000000238418579
+UIAspectRatioConstraint2.Parent = ImageButton1
+TextLabel3.Parent = ImageButton1
+TextLabel3.Size = UDim2.new(1, 0, 1, 0)
+TextLabel3.BackgroundColor = BrickColor.new("Institutional white")
+TextLabel3.BackgroundColor3 = Color3.new(1, 1, 1)
+TextLabel3.BackgroundTransparency = 1
+TextLabel3.BorderColor = BrickColor.new("Really black")
+TextLabel3.BorderColor3 = Color3.new(0, 0, 0)
+TextLabel3.BorderSizePixel = 0
+TextLabel3.Font = Enum.Font.Unknown
+TextLabel3.FontSize = Enum.FontSize.Size14
+TextLabel3.Text = "AIMBOT"
+TextLabel3.TextColor = BrickColor.new("Really red")
+TextLabel3.TextColor3 = Color3.new(1, 0, 0)
+TextLabel3.TextScaled = true
+TextLabel3.TextSize = 14
+TextLabel3.TextWrap = true
+TextLabel3.TextWrapped = true
+LocalScript4.Parent = ImageButton1
+table.insert(cors,sandbox(LocalScript4,function()
+	-- CODE
+
+	local IS_HOLDING = false
+
+	function GetBestTarget()
+		local BestTarget = {["Character"] = nil, ["Magnitude"] = 9999999999999}
+
+		for i, inst in pairs(workspace:GetChildren()) do
+			if inst:IsA("Humanoid") and inst.Parent.Name ~= game.Players.LocalPlayer.Name then
+				if game.Players:FindFirstChild(inst.Parent.Name) then
+					local plr = game.Players:FindFirstChild(inst.Parent.Name)
+
+					if plr.Team == game.Players.LocalPlayer.Team then
+						continue
+					end
+				end
+
+				if (BestTarget.Character.HumanoidRootPart.Position - inst.Parent.HumanoidRootPart.Position).Magnitude < BestTarget.Magnitude then
+					BestTarget = {["Character"] = inst.Parent, ["Magnitude"] = (BestTarget.Character.HumanoidRootPart.Position - inst.Parent.HumanoidRootPart.Position).Magnitude}
+				end
+			end
+		end
+
+		return BestTarget
+	end
+
+	local TweenService = game:GetService("TweenService")
+	local tweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Sine, Enum.EasingDirection.Out, 0, false, 0)
+
+	script.Parent.MouseButton1Down:Connect(function()
+		IS_HOLDING = true
+
+		TweenService:Create(script.Parent, tweenInfo, {["BackgroundColor3"] = Color3.fromRGB(170, 0, 0)}):Play()
+	end)
+
+	script.Parent.MouseButton1Up:Connect(function()
+		IS_HOLDING = false
+
+		TweenService:Create(script.Parent, tweenInfo, {["BackgroundColor3"] = Color3.fromRGB(85, 0, 0)}):Play()
+	end)
+
+	while task.wait() do
+		if IS_HOLDING then
+			if game.Players.LocalPlayer.Character:FindFirstChildWhichIsA("Tool") ~= nil then
+				local tool = game.Players.LocalPlayer.Character:FindFirstChildWhichIsA("Tool")
+
+				if tool ~= nil then
+					local remote = tool:FindFirstChildWhichIsA("RemoteEvent", true)
+
+					if remote ~= nil then
+						local target = GetBestTarget()
+
+						if target.Character ~= nil then
+							local args = {
+								[1] = target.Character.Head.Position,
+								[2] = target.Character.Head,
+								[3] = Vector3.yAxis
+							}
+
+							local args2 = {
+								[1] = {
+									[1] = {
+										["Normal"] = Vector3.yAxis,
+										["ClientHitSize"] = target.Character.Head,
+										["Position"] = target.Character.Head.Position,
+										["Instance"] = target.Character.Head,
+										["Distance"] = 5000,
+										["Material"] = Enum.Material.Plastic
+									}
+								}
+							}
+
+							pcall(function()
+								remote:FireServer(unpack(if (math.random() < 0.5) then args else args2))
+							end)
+						end
+					end
+				end
 			end
 		end
 	end
-	
-	print(table.concat(functions, ", "))
+end))
+for i,v in pairs(mas:GetChildren()) do
+	v.Parent = workspace
+	pcall(function() v:MakeJoints() end)
+end
+mas:Destroy()
+for i,v in pairs(cors) do
+	spawn(function()
+		pcall(v)
+	end)
+end
