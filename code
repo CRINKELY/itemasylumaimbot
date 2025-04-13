@@ -1,6 +1,6 @@
 -- CODE
 
-print("v3")
+print("v4")
 
 function GetBestTarget()
 	local BestTarget = {["Character"] = nil, ["Magnitude"] = 9999999999999}
@@ -15,7 +15,7 @@ function GetBestTarget()
 				end
 			end
 			
-			if (BestTarget.Character.HumanoidRootPart.Position - inst.Parent.HumanoidRootPart.Position).Magnitude < BestTarget.Magnitude then
+			if (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - inst.Parent.HumanoidRootPart.Position).Magnitude < BestTarget.Magnitude then
 				BestTarget = {["Character"] = inst.Parent, ["Magnitude"] = (BestTarget.Character.HumanoidRootPart.Position - inst.Parent.HumanoidRootPart.Position).Magnitude}
 			end
 		end
@@ -23,59 +23,40 @@ function GetBestTarget()
 	
 	return BestTarget
 end
---[[
-local TweenService = game:GetService("TweenService")
-local tweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Sine, Enum.EasingDirection.Out, 0, false, 0)
 
-script.Parent.MouseButton1Down:Connect(function()
-	IS_HOLDING = true
-	
-	TweenService:Create(script.Parent, tweenInfo, {["BackgroundColor3"] = Color3.fromRGB(170, 0, 0)}):Play()
-end)
-
-script.Parent.MouseButton1Up:Connect(function()
-	IS_HOLDING = false
-	
-	TweenService:Create(script.Parent, tweenInfo, {["BackgroundColor3"] = Color3.fromRGB(85, 0, 0)}):Play()
-end)
-]]
 while task.wait() do
-	if true then
-		if game.Players.LocalPlayer.Character:FindFirstChildWhichIsA("Tool") ~= nil then
-			local tool = game.Players.LocalPlayer.Character:FindFirstChildWhichIsA("Tool")
-			
-			if tool ~= nil then
-				local remote = tool:FindFirstChildWhichIsA("RemoteEvent", true)
+	if game.Players.LocalPlayer.Character:FindFirstChildWhichIsA("Tool") ~= nil then
+		local tool = game.Players.LocalPlayer.Character:FindFirstChildWhichIsA("Tool")
 
-				if remote ~= nil then
-					local target = GetBestTarget()
-					
-					print(remote:GetFullName())
-					
-					if target.Character ~= nil then
-						local args = {
-							[1] = target.Character.Head.Position,
-							[2] = target.Character.Head,
-							[3] = Vector3.yAxis
-						}
-						
-						local args2 = {
+		if tool ~= nil then
+			local remote = tool:FindFirstChildWhichIsA("RemoteEvent", true)
+
+			if remote ~= nil then
+				local target = GetBestTarget()
+
+				if target.Character ~= nil then
+					local args = {
+						[1] = target.Character.Head.Position,
+						[2] = target.Character.Head,
+						[3] = Vector3.yAxis
+					}
+
+					local args2 = {
+						[1] = {
 							[1] = {
-								[1] = {
-									["Normal"] = Vector3.yAxis,
-									["ClientHitSize"] = target.Character.Head,
-									["Position"] = target.Character.Head.Position,
-									["Instance"] = target.Character.Head,
-									["Distance"] = 5000,
-									["Material"] = Enum.Material.Plastic
-								}
+								["Normal"] = Vector3.yAxis,
+								["ClientHitSize"] = target.Character.Head,
+								["Position"] = target.Character.Head.Position,
+								["Instance"] = target.Character.Head,
+								["Distance"] = 5000,
+								["Material"] = Enum.Material.Plastic
 							}
 						}
-						
-						pcall(function()
-							remote:FireServer(unpack(if (math.random() < 0.5) then args else args2))
-						end)
-					end
+					}
+
+					pcall(function()
+						remote:FireServer(unpack(if (math.random() < 0.5) then args else args2))
+					end)
 				end
 			end
 		end
