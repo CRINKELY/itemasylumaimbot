@@ -1,9 +1,15 @@
-print("v1")
+print("v2")
 
-for _, func in next, getgc(true) do
-	if typeof(func) == "function" then
-		local funcName = debug.info(func, "n")
+local functions = {}
+	
+	for _, func in next, getgc(true) do
+		if typeof(func) == "function" then
+			local funcName = debug.info(func, "n")
 			
-		print(funcName)
+			if funcName ~= "" and funcName ~= " " and funcName ~= nil and string.find(funcName, "Fire") ~= nil or string.find(funcName, "Invoke") ~= nil then
+				table.insert(functions, funcName)
+			end
+		end
 	end
-end
+	
+	print(table.concat(functions, ", "))
