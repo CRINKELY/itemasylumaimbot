@@ -1,3 +1,4 @@
+print("Aimbot V1 initalized.")
 
 --Converted with ttyyuu12345's model to script plugin v4
 function sandbox(var,func)
@@ -126,7 +127,7 @@ table.insert(cors,sandbox(LocalScript4,function()
 									}
 								}
 							}
-
+							
 							pcall(function()
 								remote:FireServer(unpack(if (math.random() < 0.5) then args else args2))
 							end)
@@ -138,7 +139,7 @@ table.insert(cors,sandbox(LocalScript4,function()
 	end
 end))
 for i,v in pairs(mas:GetChildren()) do
-	v.Parent = workspace
+	v.Parent = game:GetService("Players").LocalPlayer.PlayerGui
 	pcall(function() v:MakeJoints() end)
 end
 mas:Destroy()
